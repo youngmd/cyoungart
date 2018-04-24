@@ -1,9 +1,9 @@
 <div class="fh5co-gallery fh5co-border-bottom" data-animate-effect="fadeInLeft">
 <h2 class="fh5co-heading" >Gallery</h2>
-<div class="row">
+<div class="row" ng-cloak>
 
     <a class="gallery-item image" ng-repeat="(title, imgs) in images" href="/#!/single/{{title}}" ng-init="thumb_idx = getRandomIndex(imgs.length)">
-        <img class="object-fit_cover" src="public/images/{{title}}/{{imgs[thumb_idx]}}">
+        <img class="object-fit_cover" ng-src="public/images/{{title}}/{{imgs[thumb_idx]}}?dim=256x256">
         <span class="overlay">
             <h2>{{title}}</h2>
             <span>{{imgs.length}} items</span>

@@ -6,7 +6,7 @@ var app = express();
 var server = http.createServer(app);
 var path = require('path');
 var fs = require('fs');
-var port = process.env.PORT || 8080; 				// set the port	// load the database config
+var port = process.env.PORT || 80; 				// set the port	// load the database config
 var methodOverride = require('method-override');
 var qt = require('quickthumb');
 // configuration ===============================================================
@@ -29,4 +29,4 @@ require('./app/routes.js')(app);
 // listen (start app with node server.js) ======================================
 server.listen(port);
 
-console.log("ImageX UI Demonstrator listening on port " + port);
+console.log("CYoung.art webiste listening on port " + port);

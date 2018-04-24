@@ -1265,3 +1265,7 @@ body.offcanvas #fh5co-main, body.offcanvas .fh5co-nav-toggle {
 .object-fit_scale-down {
   object-fit: scale-down
 }
+
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+  display: none !important;
+}

@@ -1,8 +1,8 @@
-<div class="fh5co-narrow-content fh5co-border-bottom" data-animate-effect="fadeInLeft">
+<div class="fh5co-narrow-content fh5co-border-bottom" data-animate-effect="fadeInLeft" ng-cloak>
     <h2 class="fh5co-heading" >{{title}}</span></h2>
     <div class="row">
         <div class="col-md-12 col-lg-6" ng-repeat="img in images">
-            <figure><img src="public/images/{{title}}/{{img}}" class="img-responsive"></figure>
+            <figure><img ng-src="public/images/{{title}}/{{img}}?dim=512x512" class="img-responsive"></figure>
         </div>
 
         <div class="col-md-12">
