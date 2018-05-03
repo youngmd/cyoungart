@@ -9,6 +9,7 @@ var fs = require('fs');
 var port = process.env.PORT || 80; 				// set the port	// load the database config
 var methodOverride = require('method-override');
 var qt = require('quickthumb');
+var db = require('./models.js');
 // configuration ===============================================================
  
 app.use('/public', qt.static(path.join(__dirname + '/public'), {type: 'resize'}));
@@ -23,10 +24,22 @@ app.get('/favicon.ico', function(req, res) {  //return no content for favicon
     res.status(204);
 });
 
-// routes ======================================================================
+// db.init(function(){
+//     // routes ======================================================================
+//
+//     // listen (start app with node server.js) ======================================
+//     server.listen(port);
+//
+//     console.log("CYoung.art webiste listening on port " + port);
+// });
+
 require('./app/routes.js')(app);
 
-// listen (start app with node server.js) ======================================
-server.listen(port);
-
-console.log("CYoung.art webiste listening on port " + port);
+db.init(function(err) {
+    if(err) {
+        console.log(err);
+        return;
+    }
+    server.listen(port);
+    console.log("CYoung.art website listening on port " + port);
+});

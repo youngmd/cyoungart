@@ -120,19 +120,36 @@ var images = {
     ]
 };
 
-myapp.controller('GalleryController', function ($scope, $http, $filter, $modal, $timeout, $location, $cookies, appconf, toaster) {
+myapp.controller('GalleryController', function ($scope, $http) {
 
-    $scope.images = images;
+    $scope.images = {};
 
-    $scope.getRandomIndex = function(length){
-        return Math.floor(Math.random() * length);
-    };
+    $scope.categories = ['People','Places','Things'];
 
+    $scope.categories.forEach(function(c){
+        $http({
+            method: "GET",
+            url: "/sample/"+c
+        }).then(function (res) {
+            console.log(res);
+            $scope.images[c] = res.data;
+        }, function (err) {
+            console.dir(err);
+        });
+    });
 });
 
 myapp.controller('SingleController', function ($scope, $routeParams, $http, $filter, $modal, $timeout, $location, $cookies, appconf, toaster) {
+    $scope.images = {};
     $scope.title=$routeParams.topic;
-    $scope.images = images[$routeParams.topic];
+    $http({
+        method: "GET",
+        url: "/images/"+$routeParams.topic
+    }).then(function (res) {
+        $scope.images = res.data;
+    }, function (err) {
+        console.dir(err);
+    });
 });
 
 myapp.controller('AboutController', function ($scope, $routeParams, $http, $filter, $modal, $timeout, $location, $cookies, appconf, toaster) {
@@ -165,95 +182,48 @@ myapp.controller('SigninController', function ($scope, $http, $location, toaster
 myapp.controller('AdminController', function ($scope, $http, $location, $modal, toaster, appconf, AuthService) {
 
     $scope.images = [];
-    $scope.details = true;
-    $scope.includeCount = appconf.includeCount;
+    $scope.isEditing = false;
 
-    $scope.coverTie = false;
-    $scope.coverWinner = {
-        cover_votes: 0
-    };
+    $scope.categories = ['People','Places','Things','Uncategorized'];
 
-    $scope.getImages = function() {
+    $scope.updateImg = function(img) {
+        console.log(img);
         $http({
-            method: "GET",
-            url: "/pollImages",
-            params: { 'foobar': new Date().getTime() }
+            method: "POST",
+            url: "/update",
+            data: {image: img}
         }).then(function (res) {
-            $scope.images = res.data;
-            angular.forEach($scope.images, function(img){
-                if(img.cover_votes > $scope.coverWinner.cover_votes){
-                    $scope.coverTie = false;
-                    $scope.coverWinner = img;
-                }
-                if(img.cover_votes == $scope.coverVotes){
-                    $scope.coverTie = true;
-                }
-            });
+            console.log(res);
         }, function (err) {
             console.dir(err);
         });
     };
 
-    $scope.updateImages = function() {
+    $scope.getImages = function() {
         $http({
-            method: "POST",
-            url: "/pollUpdate",
-            data: $scope.images
+            method: "GET",
+            url: "/imagelist",
+            params: { 'foobar': new Date().getTime() }
         }).then(function (res) {
-            toaster.pop('info','Updated', 'Image array updated successfully');
             $scope.images = res.data;
         }, function (err) {
-            toaster.pop('error','Unknown Error',err);
+            console.dir(err);
         });
     };
 
-    $scope.resetPoll = function() {
-        $modal.open({
-            template: '<modal-dialog><h4>Are you sure?</h4><br><button class="btn btn-danger" ng-click="confirm()">Yes, Reset</button></modal-dialog>', // loads the template
-            windowClass: 'modal', // windowClass - additional CSS class(es) to be added to a modal window template
-            backdrop: false,
-            controller: function ($scope, $modalInstance, toaster) {
-                $scope.size = 'sm';
-                $scope.cancel = function () {
-                    $modalInstance.dismiss('cancel');
-                };
-
-                $scope.confirm = function () {
-                    $http({
-                        method: "GET",
-                        url: "/resetPoll"
-                    }).then(function (res) {
-                        toaster.pop('info','Reset', 'The poll values have been reset');
-                        $modalInstance.close();
-                    }, function (err) {
-                        toaster.pop('error','Unknown Error',err);
-                    });
-                }
-            }
-        }).result.then(function () {
-            console.log("in here");
-            $scope.images = [];
-            $scope.getImages();
-        }, function () {
-            console.log("cancelled");
-        });
-
-    };
 
     $scope.getImages();
 });
 
 myapp.controller('UploadController', function ($scope, $http, FileUploader, toaster, appconf, AuthService) {
-    $scope.title = "ImageX";
+    $scope.title = "upload";
     $scope.uploader = undefined;
 
     $scope.renderupload = false;
-    AuthService.getRoles(function(roles){
-        $scope.roles = roles;
 
 
         var uploader = $scope.uploader = new FileUploader({
-            url: 'upload/'+$scope.roles[0]
+            url: 'upload'
         });
 
         // FILTERS
@@ -314,7 +284,7 @@ myapp.controller('UploadController', function ($scope, $http, FileUploader, toas
         };
 
         $scope.renderupload = true;
-    });
+
 
 
 });

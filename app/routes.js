@@ -3,16 +3,18 @@ var request = require('request');
 var path = require('path');
 var winston = require('winston');
 var clone = require('clone');
-var multer  = require('multer')
+var multer  = require('multer');
 var config = require('./config');
 var fs = require("fs");
 var reload = require('require-reload')(require);
+var db = require('../models.js');
+
 
 var logger = new winston.Logger(config.logger.winston);
 
 var storage = multer.diskStorage({ //multers disk storage settings
     destination: function (req, file, cb) {
-        var dir = './uploads/'+req.params.group;
+        var dir = './public/images/';
         if (!fs.existsSync(dir)){
             fs.mkdirSync(dir);
         }
@@ -39,107 +41,80 @@ module.exports = function (app) {
 
 
     /** API path that will upload the files */
-    app.post('/upload/:group', function(req, res) {
+    app.post('/upload', function(req, res, next) {
         upload(req,res,function(err){
             if(err){
                 res.json({error_code:1,err_desc:err});
                 return;
             }
             console.log(req.file.filename);
-            res.json({error_code:0,err_desc:null});
-        })
-    });
-
-    app.post('/include', function(req, res) {
-        var results = reload("../images.json");
-        var choices = req.body;
-        console.log(choices);
-        for(var choice of choices){
-            results.forEach(function (img) {
-                if(img.filename === choice){
-                    img.include_votes++;
+            db.Image.findOneAndUpdate(
+                {path: req.file.filename},
+                {
+                    path: req.file.filename,
+                    hide: true,
+                    title: "Untitled",
+                    width: 0,
+                    height: 0,
+                    category : "Uncategorized",
+                    tags: [],
+                    location: "",
+                    desc: "",
+                    inventory: {original:1,prints:0,cards:0}
+                },
+                {upsert: true},
+                function(err, rec){
+                    if(err) return next(err);
+                    console.log(rec);
+                    res.json({error_code:0,err_desc:rec});
                 }
+            );
+        });
+    });
+
+    app.post('/update', function(req, res, next) {
+
+        db.Image.findOneAndUpdate(
+            {_id: req.body.image._id},
+            req.body.image,
+            {upsert: false},
+            function(err, rec){
+                if(err) return next(err);
+                console.log(rec);
+                res.json({error_code:0,err_desc:rec});
+            }
+        );
+    });
+
+    app.get('/imagelist', function(req, res, next) {
+        db.Image.find({}, function(err, recs){
+            if(err) {return next(err)};
+            res.json(recs);
+        });
+    });
+
+    app.get('/sample/:category', function(req, res, next) {
+        db.Image.aggregate([
+            {$match : {"category": req.params.category, "hide" : false }},
+            {$sample : {size: 1}}], function(err, rec){
+            if(err) {return next(err);}
+            db.Image.aggregate([
+                {$match : {"category": req.params.category, "hide" : false }},
+                {$group : {_id: null, count: { $sum: 1 } }}], function(err, counts){
+                if(err) {return next(err);}
+                rec['counts'] = counts.count;
+                res.json({sample: rec[0], counts : counts[0]});
             });
-        }
-
-        fs.writeFile('./images.json', JSON.stringify(results), "utf8", (err) => {
-            if (err) throw err;
-            res.json({error_code: 0, err_desc: null});
         });
     });
 
-    app.post('/cover', function(req, res) {
-        var results = reload("../images.json");
-        var choices = req.body;
-        console.log(choices);
-        for(var choice of choices){
-            results.forEach(function (img) {
-                if(img.filename === choice){
-                    img.cover_votes++;
-                }
-            });
-        }
-
-        fs.writeFile('./images.json', JSON.stringify(results), "utf8", (err) => {
-            if (err) throw err;
-            res.json({error_code: 0, err_desc: null});
+    app.get('/images/:category', function(req, res, next) {
+        db.Image.find({"category": req.params.category, "hide" : false}, function(err, recs){
+            if(err) {return next(err);}
+            res.json(recs);
         });
     });
 
-    app.get('/resetPoll', function(req, res) {
-        var results = reload("../images.json");
-        results.forEach(function (img) {
-            img.include_votes = 0;
-            img.cover_votes = 0;
-        });
-
-        fs.writeFile('./images.json', JSON.stringify(results), "utf8", (err) => {
-            if (err) res.json({error_code: 1, err_desc: err});
-            res.json(results);
-        });
-    });
-
-    app.get('/pollUpdate', function(req, res) {
-        var images = req.body;
-
-        fs.writeFile('./images.json', JSON.stringify(images), "utf8", (err) => {
-            if (err) res.json({error_code: 1, err_desc: err});
-            res.json(images);
-        });
-    });
-
-
-    app.get('/pollImages', function (req, res) {
-
-        var images = reload("../images.json");
-        if (images.length >= 1) {
-            res.json(images);
-        } else {
-            fs.readdir('./public/images/poll', (err, files) => {
-                files.forEach(function (img) {
-                    var newimg = {
-                        'filename': img,
-                        'author': 'Unknown',
-                        'include_votes': 0,
-                        'cover_votes': 0,
-                        'student': true
-                    };
-                    images.push(newimg);
-                });
-
-                fs.writeFile('./images.json', JSON.stringify(images), "utf8", (err) => {
-                    if (err) throw err;
-                    res.json(images);
-                });
-            });
-
-        };
-    });
-
-    app.get('/download/:filename', function(req, res){
-        var file = './public/images/poll/' + req.params.filename;
-        res.download(file); // Set disposition and send it.
-    });
 
     // application -------------------------------------------------------------
     app.get('/*', function (req, res) {

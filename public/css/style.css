@@ -47,14 +47,14 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 figure {
-  margin-bottom: 2.5em;
+  margin-bottom: 30px;
   float: left;
   width: 100%;
 }
 figure figcaption {
-  font-size: 16px;
+  font-size: 14px;
   width: 80%;
-  margin: 20px auto 0px auto;
+  margin: 10px auto 0px auto;
   color: #b3b3b3;
   font-style: italic;
   font-family: "Merriweather", Times, serif;
@@ -260,7 +260,7 @@ figure figcaption {
   position: relative;
   width: 80%;
   margin: 0 auto;
-  padding: 4em 0;
+  padding: 1em 0;
 }
 @media screen and (max-width: 768px) {
   #fh5co-main .fh5co-narrow-content {
@@ -276,7 +276,7 @@ figure figcaption {
   width: 100%;
 }
 .fh5co-gallery .gallery-item {
-  width: 25%;
+  width: 33.333333%;
   position: relative;
   overflow: hidden;
   display: block;
@@ -302,7 +302,7 @@ figure figcaption {
 }
 @media screen and (max-width: 768px) {
   .fh5co-gallery .gallery-item {
-    width: 50%;
+    width: 33.3333%%;
   }
 }
 @media screen and (max-width: 480px) {
@@ -319,8 +319,8 @@ figure figcaption {
   z-index: 11;
   vertical-align: middle;
   padding-top: 30%;
-  visibility: hidden;
-  opacity: 0;
+  visibility: visible;
+  opacity: 1;
   -webkit-transition: 0.5s;
   -o-transition: 0.5s;
   transition: 0.5s;
@@ -1065,26 +1065,26 @@ body.offcanvas #fh5co-main, body.offcanvas .fh5co-nav-toggle {
   box-shadow: none;
 }
 
-.form-control {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  box-shadow: none;
-  background: transparent;
-  border: 2px solid rgba(0, 0, 0, 0.1);
-  height: 54px;
-  font-size: 18px;
-  font-weight: 300;
-  -webkit-border-radius: 7px;
-  -moz-border-radius: 7px;
-  -ms-border-radius: 7px;
-  border-radius: 7px;
-}
-.form-control:active, .form-control:focus {
-  outline: none;
-  box-shadow: none;
-  border-color: #7ac143;
-}
+/*.form-control {*/
+  /*-webkit-appearance: none;*/
+  /*-moz-appearance: none;*/
+  /*appearance: none;*/
+  /*box-shadow: none;*/
+  /*background: transparent;*/
+  /*border: 2px solid rgba(0, 0, 0, 0.1);*/
+  /*height: 54px;*/
+  /*font-size: 18px;*/
+  /*font-weight: 300;*/
+  /*-webkit-border-radius: 7px;*/
+  /*-moz-border-radius: 7px;*/
+  /*-ms-border-radius: 7px;*/
+  /*border-radius: 7px;*/
+/*}*/
+/*.form-control:active, .form-control:focus {*/
+  /*outline: none;*/
+  /*box-shadow: none;*/
+  /*border-color: #7ac143;*/
+/*}*/
 
 #message {
   height: 130px;
@@ -1242,8 +1242,13 @@ body.offcanvas #fh5co-main, body.offcanvas .fh5co-nav-toggle {
 /*# sourceMappingURL=style.css.map */
 
 .image {
-  width: 250px;
-  height: 250px;
+  width: 35%;
+  height: 400px;
+}
+
+.image2 {
+  width: 90%;
+  height: auto;
 }
 
 .object-fit_fill {

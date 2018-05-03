@@ -14,7 +14,7 @@ var myapp = angular.module('myapp', [
     'ui.bootstrap',
     'ui.gravatar',
     'ui.select',
-    'angularSuperGallery'
+    'gg.editableText'
 ]);
 
 myapp.factory('AuthService', function(appconf, $http) {
@@ -154,16 +154,14 @@ myapp.config(['$routeProvider', 'appconf', function($routeProvider, appconf) {
         })
         .when('/upload', {
             templateUrl: 't/upload.html',
-            controller: 'UploadController',
-            requiresLogin: true,
-            requiresAdmin: true
+            controller: 'UploadController'
         })
         .when('/admin', {
             templateUrl: 't/admin.html',
             controller: 'AdminController'
         })
         .otherwise({
-            redirectTo: '/poll'
+            redirectTo: '/gallery'
         });
 }]).run(['$rootScope', '$location', 'toaster', 'jwtHelper', 'appconf', 'AuthService', function($rootScope, $location, toaster, jwtHelper, appconf, AuthService) {
     $rootScope.$on("$routeChangeStart", function(event, next, current) {
