@@ -165,7 +165,7 @@ myapp.config(['$routeProvider', 'appconf', function($routeProvider, appconf) {
         });
 }]).run(['$rootScope', '$location', 'toaster', 'jwtHelper', 'appconf', 'AuthService', function($rootScope, $location, toaster, jwtHelper, appconf, AuthService) {
     $rootScope.$on("$routeChangeStart", function(event, next, current) {
-        $rootScope.title = 'CassidyYoung';
+        $rootScope.title = 'CYoung Art';
         //redirect to /signin if user hasn't authenticated yet
         if(next.requiresLogin) {
             var authToken = AuthService.token();
