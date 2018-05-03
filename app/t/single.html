@@ -4,7 +4,7 @@
     <div class="row">
         <div class="col-xs-12" ng-repeat="img in images">
             <figure>
-                <img src="public/images/{{img.path}}?dim=1024x1024" class="img-responsive">
+                <img ng-src="public/images/{{img.path}}?dim=1024x1024" class="img-responsive">
                 <figcaption>{{img.title}}<span class="pull-right">{{img.date}}</span></figcaption>
             </figure>
         </div>
