@@ -7,8 +7,9 @@
 angular.module('app.config', [])
 .constant('appconf', {
 
-    includeCount : 5,
-    voteFor : 10
+    auth_token: 'auth_token',
+    auth_redirect_url: 'admin',
+    user: 'user'
 
     });
 

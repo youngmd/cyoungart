@@ -2,7 +2,7 @@
 <h2 class="fh5co-heading" >Gallery</h2>
 <div class="row" ng-cloak>
 
-    <a class="gallery-item image" ng-repeat="(title, img) in images" href="/#!/single/{{title}}">
+    <a class="gallery-item image animated fadeIn slower" ng-repeat="(title, img) in images" href="/#!/single/{{title}}">
         <img class="image object-fit_cover" ng-src="public/images/{{img.sample.path}}?dim=1024x1024">
         <span class="overlay">
             <h2>{{title}}</h2>

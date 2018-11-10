@@ -1274,3 +1274,269 @@ body.offcanvas #fh5co-main, body.offcanvas .fh5co-nav-toggle {
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
   display: none !important;
 }
+
+.equal {
+  display: flex;
+  display: -webkit-flex;
+  flex-wrap: wrap;
+}
+
+/*https://miketricking.github.io/bootstrap-image-hover/*/
+.hovereffect {
+  width: 100%;
+  height: 100%;
+  float: left;
+  overflow: hidden;
+  position: relative;
+  text-align: center;
+  cursor: default;
+}
+
+.hovereffect .overlay {
+  position: absolute;
+  overflow: hidden;
+  width: 80%;
+  height: 80%;
+  left: 10%;
+  top: 10%;
+  border-bottom: 1px solid #FFF;
+  border-top: 1px solid #FFF;
+  -webkit-transition: opacity 0.35s, -webkit-transform 0.35s;
+  transition: opacity 0.35s, transform 0.35s;
+  -webkit-transform: scale(0,1);
+  -ms-transform: scale(0,1);
+  transform: scale(0,1);
+}
+
+.hovereffect:hover .overlay {
+  opacity: 1;
+  filter: alpha(opacity=100);
+  -webkit-transform: scale(1);
+  -ms-transform: scale(1);
+  transform: scale(1);
+}
+
+.hovereffect img {
+  display: block;
+  position: relative;
+  -webkit-transition: all 0.35s;
+  transition: all 0.35s;
+}
+
+.hovereffect:hover img {
+  filter: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg"><filter id="filter"><feComponentTransfer color-interpolation-filters="sRGB"><feFuncR type="linear" slope="0.6" /><feFuncG type="linear" slope="0.6" /><feFuncB type="linear" slope="0.6" /></feComponentTransfer></filter></svg>#filter');
+  filter: brightness(0.6);
+  -webkit-filter: brightness(0.6);
+}
+
+.hovereffect h2 {
+  text-transform: uppercase;
+  text-align: center;
+  position: relative;
+  font-size: 19px;
+  background-color: transparent;
+  color: #FFF;
+  padding: 1em 0;
+  opacity: 0;
+  filter: alpha(opacity=0);
+  -webkit-transition: opacity 0.35s, -webkit-transform 0.35s;
+  transition: opacity 0.35s, transform 0.35s;
+  -webkit-transform: translate3d(0,-100%,0);
+  transform: translate3d(0,-100%,0);
+}
+
+.hovereffect small {
+  color: #FFF;
+}
+
+.hovereffect a, .hovereffect p {
+  color: #FFF;
+  padding: 1em 0;
+  font-size: 12px;
+  opacity: 0;
+  filter: alpha(opacity=0);
+  -webkit-transition: opacity 0.35s, -webkit-transform 0.35s;
+  transition: opacity 0.35s, transform 0.35s;
+  -webkit-transform: translate3d(0,100%,0);
+  transform: translate3d(0,100%,0);
+}
+
+.hovereffect:hover a, .hovereffect:hover p, .hovereffect:hover h2 {
+  opacity: 1;
+  filter: alpha(opacity=100);
+  -webkit-transform: translate3d(0,0,0);
+  transform: translate3d(0,0,0);
+}
+
+
+
+
+.no-boot{
+  margin: 10px 10%;
+}
+
+
+.no-boot label{
+  display: block;
+}
+
+/* input styles */
+.no-boot input,
+.no-boot select{
+  width: 100%;
+  height: 24px;
+  margin-bottom: 10px;
+  padding: 4px 10px;
+  font-family: helvetica;
+  font-size: 14px;
+}
+
+.no-boot input{
+  border: none;
+  border-bottom: 1px solid #b6b6b6;
+}
+
+.no-boot input:focus{
+  outline: 0;
+  border-bottom: 1px solid #66afe9;
+  box-shadow: 0 3px 0 #66afe9;
+}
+
+/*  submit button styles */
+.no-boot input[type=submit]{
+  background-color: #62DF49;
+  color: #fff;
+  height: 44px;
+  width: 45%;
+  cursor: pointer;
+}
+
+.no-boot input[type=submit]:hover{
+  background-color: #56FBD2;
+}
+
+.no-boot input[type=submit]:focus{
+  outline: 0;
+  border-bottom: 0;
+  box-shadow: none;
+}
+
+/* disable submit button so no other actions can take place while form goes through */
+.no-boot input[type=submit][disabled]{
+  cursor: not-allowed;
+  background-color: #8CE67A;
+}
+
+/*  Square Fields */
+.sq-input{
+  margin-bottom: 10px;
+  border: none;
+  border-bottom: 1px solid #b6b6b6;
+}
+
+/*  [iFrame class]--focus is added when the square form is focused
+use similar to other form focus style for consistency */
+.sq-input--focus{
+  outline: 0;
+  border-bottom: 1px solid #66afe9;
+  box-shadow: 0 3px 0 #66afe9;
+}
+
+/* [iFrame class]--error is added when the iFrame local check fails
+use similar styling on other forms to ensure consistent error styles */
+.sq-input--error{
+  background-color: #F3C0C0;
+}
+
+/* error messages */
+.no-boot #card-errors li{
+  list-style-type: none;
+  padding: 10px;
+  margin-bottom: 5px;
+  background-color: #E27272;
+  color: white;
+}
+
+/* Success */
+#successNotification{
+  margin: 0;
+  text-align: center;
+  background-image: linear-gradient(-1deg, #72E07B 0%, #56FBD2 100%);
+  border-radius: 4px;
+  padding: 25% 30%;
+  color: white;
+  font-size: 32px;
+}
+
+/* Customize the "{{Wallet}} not enabled" message */
+.wallet-not-enabled {
+  min-width: 200px;
+  min-height: 40px;
+  max-height: 64px;
+  padding: 0;
+  margin: 10px;
+  line-height: 40px;
+  background: #eee;
+  border-radius: 5px;
+  font-weight: lighter;
+  font-style: italic;
+  font-family: inherit;
+  display: block;
+}
+
+/* Customize the Apple Pay on the Web button */
+.button-apple-pay {
+  min-width: 200px;
+  min-height: 40px;
+  max-height: 64px;
+  padding: 0;
+  margin: 10px;
+  background-image: -webkit-named-image(apple-pay-logo-white);
+  background-color: black;
+  background-size: 100% 60%;
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  border-radius: 5px;
+  cursor:pointer;
+  display: none;
+}
+
+/* Customize the Masterpass button */
+.button-masterpass {
+  min-width: 200px;
+  min-height: 40px;
+  max-height: 40px;
+  padding: 0;
+  margin: 10px;
+  background-image: url(https://static.masterpass.com/dyn/img/btn/global/mp_chk_btn_147x034px.svg);
+  background-color: black;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  border-radius: 5px;
+  border-color: rgb(255, 255, 255);
+  cursor:pointer;
+  display: none;
+}
+
+#sq-walletbox {
+  float:left;
+  margin:5px;
+  padding:10px;
+  text-align: center;
+  vertical-align: top;
+  font-weight: bold;
+}
+
+.ngclicker {
+  cursor:pointer;
+}
+
+.ngclicker:hover {
+  text-decoration: underline;
+}
+
+/* Google Maps */
+#map {
+  height: 100%;
+}

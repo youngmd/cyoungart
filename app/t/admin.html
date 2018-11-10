@@ -8,6 +8,7 @@
     <br><br>
     <div class="row">
 
+        <pagination ng-change="getImages()" total-items="totalItems" items-per-page="limit" ng-model="currentPage" max-size="maxSize" class="pagination-sm" boundary-links="true" rotate="false" num-pages="numPages"></pagination>
         <div class="col-md-12">
             <table class="table table-bordered table-condensed">
                 <thead>
@@ -15,42 +16,57 @@
                     <th>Title</th>
                     <th>Category</th>
                     <th>Tags</th>
-                    <th>WxH</th>
+                    <th>Inventory</th>
+                    <th>W</th>
+                    <th>H</th>
                     <th>Description</th>
                     <th>Location</th>
+                    <th>Medium</th>
                     <th>Date</th>
                     <th>Hide</th>
+                    <th>Delete</th>
                 </thead>
                 <tbody>
                     <tr ng-repeat="img in images | filter: search.text">
-                        <td><img src="{{'/public/images/' + img.path + '?dim=64x64';}}" alt="{{img.path}}"><br><small>{{img.path}}</small></td>
-                        <td><em gg-editable-text="img.title" gg-is-editing="isEditing" gg-on-change="img.title=value; updateImg(img)"></em></td>
+                        <td><img src="{{'/public/images/' + img.path + '?dim=64x64';}}" alt="{{img.path}}"></td>
+                        <td><em gg-editable-text="img.title" gg-is-editing="isEditing" gg-on-change="updateImg($index, 'title', value)"></em></td>
                         <td>
-                            <select ng-model="img.category" class="form-control input-sm" ng-change="updateImg(img)">
+                            <select ng-model="img.category" class="form-control input-sm" ng-change="updateImg($index, 'category', value)">
                                 <option ng-repeat="cat in categories" value="{{cat}}">{{cat}}</option>
                             </select>
                         </td>
                         <td>{{img.tags}}</td>
+                        <td>
+                            <li ng-repeat="(k,v) in img.inventory">{{k}}: <em gg-editable-text="img.inventory[k]"
+                                    gg-is-editing="isEditing2"
+                                    gg-on-change="updateImg($index, 'inventory', value)"></em>
+                            </li></td>
                         <td><em
                                 gg-editable-text="img.width"
-                                gg-is-editing="isEditing2"
-                                gg-on-change="img.width=value; updateImg(img)"></em>x <em
-                                gg-editable-text="img.height"
                                 gg-is-editing="isEditing3"
-                                gg-on-change="img.height=value; updateImg(img)"></em></td>
+                                gg-on-change="updateImg($index, 'width', value)"></em></td>
+                        <td><em
+                                gg-editable-text="img.height"
+                                gg-is-editing="isEditing4"
+                                gg-on-change="updateImg($index, 'height', value)"></em></td>
                         <td><em
                                 gg-editable-text="img.desc"
-                                gg-is-editing="isEditing4"
-                                gg-on-change="img.desc=value; updateImg(img)"></em></td>
+                                gg-is-editing="isEditing5"
+                                gg-on-change="updateImg($index, 'desc', value)"></em></td>
                         <td><em
                                 gg-editable-text="img.location"
-                                gg-is-editing="isEditing5"
-                                gg-on-change="img.location=value; updateImg(img)"></em></td>
+                                gg-is-editing="isEditing6"
+                                gg-on-change="updateImg($index, 'location', value)"></em></td>
+                        <td><em
+                                gg-editable-text="img.medium"
+                                gg-is-editing="isEditing7"
+                                gg-on-change="updateImg($index, 'medium', value)"></em></td>
                         <td><em
                                 gg-editable-text="img.date"
-                                gg-is-editing="isEditing6"
-                                gg-on-change="img.date=value; updateImg(img)"></em></td>
-                        <td><input type="checkbox" ng-model="img.hide" ng-change="updateImg(img)"></td>
+                                gg-is-editing="isEditing8"
+                                gg-on-change="updateImg($index, 'date', value)"></em></td>
+                        <td><input type="checkbox" ng-model="img.hide" ng-change="updateImg($index,'hide',img.hide)"></td>
+                        <td><i class="fa fa-fw fa-trash text-danger" ng-click="deleteImg(img, $index)"></i></td>
                     </tr>
                 </tbody>
             </table>

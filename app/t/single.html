@@ -1,17 +1,35 @@
-<div class="fh5co-narrow-content fh5co-border-bottom" data-animate-effect="fadeInLeft" ng-cloak>
-    <h2 class="fh5co-heading" ><span>{{title}}</span></h2>
-    <p>A description of the gallery contents.</p>
+<div class="fh5co-narrow-content fh5co-border-bottom container-flex" data-animate-effect="fadeInLeft" ng-cloak>
+    <h2 class="fh5co-heading animated fadeIn slow" ><span>{{title}}</span></h2>
     <div class="row">
-        <div class="col-xs-12" ng-repeat="img in images">
+        <!--<p>A description of the gallery contents.</p>-->
+        <div class="pull-right animated fadeIn delay-1s"><pagination ng-change="getImages()" total-items="totalItems" items-per-page="limit" ng-model="currentPage" max-size="maxSize" class="pagination-sm" boundary-links="true" rotate="false" num-pages="numPages"></pagination></div>
+    </div>
+    <div class="row equal">
+        <div class="col-md-12 col-lg-6" ng-repeat="img in images">
             <figure>
-                <img ng-src="public/images/{{img.path}}?dim=1024x1024" class="img-responsive">
-                <figcaption>{{img.title}}<span class="pull-right">{{img.date}}</span></figcaption>
+                <div class="hovereffect animated zoomIn delay-1s" ng-click="openDetail(img._id)">
+                    <img class="img-responsive" ng-src="public/images/{{img.path}}?dim=800x800">
+                    <div class="overlay">
+                        <h2>{{img.title}}<br><small>{{img.tags[0]}}</small></h2>
+                        <p>{{img.date | date: 'longDate'}}<br>
+                            {{img.medium}}<br>
+                            {{img.width}}" x {{img.height}}"
+                        </p>
+                    </div>
+                </div>
+                <figcaption><span class="animated fadeIn slow delay-2s">{{img.title}}</span></figcaption>
             </figure>
         </div>
+    </div>
 
+    <div class="row">
+        <div class="row">
+            <div class="pull-right"><pagination ng-change="getImages()" total-items="totalItems" items-per-page="limit" ng-model="currentPage" max-size="maxSize" class="pagination-sm" boundary-links="true" rotate="false" num-pages="numPages"></pagination></div>
+        </div>
         <div class="col-md-12">
             <p class="text-center"><a href="gallery" class="btn btn-primary btn-outline">Back to Gallery</a></p>
         </div>
 
     </div>
+
 </div>

@@ -5,8 +5,9 @@ var http = require('http');
 var app = express();
 var server = http.createServer(app);
 var path = require('path');
+var favicon = require('serve-favicon');
 var fs = require('fs');
-var port = process.env.PORT || 80; 				// set the port	// load the database config
+var port = process.env.PORT || 8001; 				// set the port	// load the database config
 var methodOverride = require('method-override');
 var qt = require('quickthumb');
 var db = require('./models.js');
@@ -20,9 +21,7 @@ app.use(methodOverride('X-HTTP-Method-Override')); // override with the X-HTTP-M
 app.use(bodyParser.json({limit: '100mb'}));
 app.use(bodyParser.urlencoded({limit: '100mb', extended: true}));
 app.disable('view cache');
-app.get('/favicon.ico', function(req, res) {  //return no content for favicon
-    res.status(204);
-});
+app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 
 // db.init(function(){
 //     // routes ======================================================================
@@ -40,6 +39,6 @@ db.init(function(err) {
         console.log(err);
         return;
     }
-    server.listen(port);
+    server.listen(port, '127.0.0.1');
     console.log("CYoung.art website listening on port " + port);
 });

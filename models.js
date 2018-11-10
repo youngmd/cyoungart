@@ -5,6 +5,7 @@
 
 //contrib
 var mongoose = require('mongoose');
+const mongoosePaginate = require('mongoose-paginate');
 
 exports.init = function(cb) {
     mongoose.connect('mongodb://localhost/cyoung', {}, function(err) {
@@ -26,10 +27,13 @@ var imageSchema = mongoose.Schema({
     category : String,
     tags: Array,
     location: String,
+    medium: String,
     desc: String,
     hide: Boolean,
     inventory: mongoose.Schema.Types.Mixed
     //headers: mongoose.Schema.Types.Mixed, //HTTP header associated with this answer  - Do we really need/want this?
 });
+
+imageSchema.plugin(mongoosePaginate);
 
 exports.Image  = mongoose.model('Image', imageSchema);

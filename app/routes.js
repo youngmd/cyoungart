@@ -8,6 +8,14 @@ var config = require('./config');
 var fs = require("fs");
 var reload = require('require-reload')(require);
 var db = require('../models.js');
+const jsonwt = require('jsonwebtoken');
+
+var SquareConnect = require('square-connect');
+var defaultClient = SquareConnect.ApiClient.instance;
+
+// Configure OAuth2 access token for authorization: oauth2
+var oauth2 = defaultClient.authentications['oauth2'];
+oauth2.accessToken = config.square.token;
 
 
 var logger = new winston.Logger(config.logger.winston);
@@ -31,6 +39,36 @@ var upload = multer({ //multer settings
     storage: storage
 }).single('file');
 
+
+function issue_jwt(user, cb) {
+    console.log("issuing!");
+    var claim = {
+        iss: config.auth.iss,
+        exp: (Date.now() + config.auth.ttl)/1000,
+        profile: {
+            username: user,
+            role: 'admin'
+        }
+    };
+    console.log( jsonwt.sign(claim, config.auth.secret));
+    cb(null, jsonwt.sign(claim, config.auth.secret));
+}
+
+function check_jwt(req, res, next) {
+    if(req.query.jwt === undefined) {
+        res.sendStatus("403"); //FORBIDDEN
+        return;
+    }
+
+    var decoded = jsonwt.verify(req.query.jwt, config.auth.secret);
+
+    if(decoded === undefined){
+        res.sendStatus("403"); //FORBIDDEN
+        return;
+    } else {
+        next();
+    }
+}
 
 module.exports = function (app) {
 
@@ -73,7 +111,7 @@ module.exports = function (app) {
     });
 
     app.post('/update', function(req, res, next) {
-
+        console.log(req.body.image);
         db.Image.findOneAndUpdate(
             {_id: req.body.image._id},
             req.body.image,
@@ -86,10 +124,32 @@ module.exports = function (app) {
         );
     });
 
-    app.get('/imagelist', function(req, res, next) {
-        db.Image.find({}, function(err, recs){
+    app.get('/imagelist/:limit/:page', function(req, res, next) {
+        db.Image.paginate({}, {page: parseInt(req.params.page), limit: parseInt(req.params.limit)}, function(err, recs){
             if(err) {return next(err)};
             res.json(recs);
+        });
+    });
+
+    app.get('/image/:id', function(req, res, next) {
+        db.Image.find({'_id': req.params.id}, function(err, img){
+            if(err) {return next(err)};
+            res.json(img);
+        });
+    });
+
+    app.get('/imgsearch/:q/:limit/:page', function(req, res, next) {
+        db.Image.paginate({ "title": { "$regex": req.params.q, "$options": "i" }}, {page: parseInt(req.params.page), limit: parseInt(req.params.limit)},
+            function(err,docs) {
+                if(err) return next(err);
+                res.json(docs);
+        });
+    });
+
+    app.delete('/image/:id', function(req, res, next) {
+        db.Image.findByIdAndRemove(req.params.id, function(err, img){
+            if(err) {return next(err)};
+            res.json(img);
         });
     });
 
@@ -108,12 +168,114 @@ module.exports = function (app) {
         });
     });
 
-    app.get('/images/:category', function(req, res, next) {
-        db.Image.find({"category": req.params.category, "hide" : false}, function(err, recs){
+    app.get('/images/:category/:limit/:page', function(req, res, next) {
+        db.Image.paginate({"category": req.params.category, "hide" : false}, {page: parseInt(req.params.page), limit: parseInt(req.params.limit)}, function(err, recs){
             if(err) {return next(err);}
             res.json(recs);
         });
     });
+
+    app.post('/users/login', function(req, res, next) {
+        if(req.body.username && req.body.password) {
+            if(req.body.username == config.auth.admin_user && req.body.password == config.auth.admin_pass) {
+                issue_jwt(config.auth.admin_user, function(err, token){
+                    if(err) {return next(err)};
+                    res.json(token);
+                })
+            } else {
+                res.sendStatus("403"); //FORBIDDEN
+            }
+        } else {
+            res.sendStatus("403"); //FORBIDDEN
+        }
+    });
+
+    //SQUARE API
+    app.get('/square/locations', function(req, res, next) {
+        var api = new SquareConnect.LocationsApi();
+        api.listLocations().then(function(data) {
+            console.log('API called successfully. Returned data: ' + data);
+            res.json(data);
+        }, function(error) {
+            console.error(error);
+        });
+    });
+
+    app.post('/checkout', function(req, res, next) {
+        console.log(req.body);
+        var api = new SquareConnect.CheckoutApi();
+        const idempotencyKey = require('crypto').randomBytes(32).toString('hex');
+        var order = {
+            reference_id: 'Cyoung.art purchase',
+            line_items: req.body.line_items,
+            redirectUrl: req.body.request_url,
+            taxes: [
+                {
+                    name: 'Sales Tax',
+                    type: 'ADDITIVE',
+                    percentage: '7.0'
+                }
+            ]
+        };
+
+        const requestBody = {
+            idempotency_key: idempotencyKey,
+            order: order,
+            ask_for_shipping_address: true,
+            merchant_support_email: 'help@cyoung.art'
+        };
+
+        api.createCheckout(config.square.location, requestBody)
+            .then((response) => {
+                const checkout = response.checkout;
+                res.json(checkout);
+            }).catch((err) => {
+            console.log(err);
+        });
+
+    });
+
+    app.get('/square/testcheckout', function(req, res, next) {
+        var api = new SquareConnect.CheckoutApi();
+        const idempotencyKey = require('crypto').randomBytes(32).toString('hex');
+        const requestBody = {
+            idempotency_key: idempotencyKey,
+            order: {
+                reference_id: 'reference_id',
+                line_items: [
+                    {
+                        name: 'Printed T Shirt',
+                        quantity: '2',
+                        base_price_money: {amount: 555, currency: 'USD'}
+                    },
+                    {
+                        name: 'Shipping & Handling',
+                        quantity: '1',
+                        base_price_money: {amount: 1095, currency: 'USD'}
+                    }
+                    ],
+                taxes: [
+                    {
+                        name: 'Sales Tax',
+                        type: 'ADDITIVE',
+                        percentage: '7.0'
+                    }
+                ]
+            },
+            ask_for_shipping_address: true,
+            merchant_support_email: 'help@cyoung.art'
+        };
+
+        api.createCheckout(config.square.test_location, requestBody)
+            .then((response) => {
+                const checkout = response.checkout;
+                res.json(checkout);
+            }).catch((err) => {
+            console.log(err);
+        });
+    });
+
+
 
 
     // application -------------------------------------------------------------

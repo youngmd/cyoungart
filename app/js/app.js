@@ -14,8 +14,57 @@ var myapp = angular.module('myapp', [
     'ui.bootstrap',
     'ui.gravatar',
     'ui.select',
-    'gg.editableText'
+    'gg.editableText',
+    '720kb.socialshare',
+    'ngMap'
 ]);
+
+
+myapp.service('CartService', function($rootScope) {
+
+    this.cart = {};
+
+    this.change = false;
+
+    this.addItem = function(item, model, price, quantity) {
+        var id = item._id+'__'+model;
+        var entry = {
+            item: item,
+            title: item.title,
+            model: model,
+            price: price,
+            quantity: quantity
+        }
+        this.cart[id] = entry;
+        $rootScope.$emit('cartChange');
+        return this.cart;
+    };
+
+    this.dropItem = function(_id) {
+        delete this.cart._id;
+        $rootScope.$emit('cartChange');
+        return this.cart;
+    };
+
+    this.modifyQuantity = function(_id, quantity) {
+        this.cart._id.quantity = quantity;
+        $rootScope.$emit('cartChange');
+        return this.cart;
+    };
+
+    this.emptyCart = function() {
+        this.cart = {};
+        $rootScope.$emit('cartChange');
+        return this.cart;
+    };
+
+    this.count = function() {
+        console.log(Object.keys(this.cart).length);
+        return Object.keys(this.cart).length;
+    }
+
+    return this;
+});
 
 myapp.factory('AuthService', function(appconf, $http) {
 
@@ -30,25 +79,16 @@ myapp.factory('AuthService', function(appconf, $http) {
             localStorage.removeItem(appconf.auth_token);
             $http({
                 method: "POST",
-                url: appconf.api_url+"/users/login",
-                data: {"email": username, "password": password}
+                url: "/users/login",
+                data: {"username": username, "password": password}
             }).
             then(function(res) {
                 authToken = res.data;
                 authToken.created = new Date(authToken.created);
                 authToken['expiration'] = authToken.created + authToken.ttl;
-                $http({
-                    method: "GET",
-                    url: appconf.api_url+"/users/"+authToken.userId+"?access_token="+authToken.id
-                }).then(function(res) {
-                    user = res.data;
-                    localStorage.setItem(appconf.auth_token, JSON.stringify(authToken));
-                    localStorage.setItem(appconf.user, JSON.stringify(user));
-                    cb(true);
-                }, function(err) {
-                    console.dir(err);
-                    cb(false);
-                });
+                localStorage.setItem(appconf.auth_token, JSON.stringify(authToken));
+                localStorage.setItem(appconf.user, JSON.stringify(username));
+                cb(true);
             }, function(err) {
                 console.dir(err);
                 cb(false);
@@ -109,6 +149,26 @@ myapp.filter('limitObjectTo', function() {
     };
 });
 
+myapp.directive('cartCount', function(CartService, $rootScope) {
+    return {
+        restrict: 'E',
+        replace: true,
+        transclude: true,
+        link: function(scope) {
+            scope.cart = CartService.count();
+            $rootScope.$on("cartChange", function(){
+                console.log('got cart change');
+                console.log(CartService.cart);
+                scope.cart = CartService.count();
+            });
+        },
+        template:
+        "<span>" +
+        "({{cart}})" +
+        "</span>"
+    };
+});
+
 myapp.directive('modalDialog', function() {
     return {
         restrict: 'E',
@@ -123,10 +183,10 @@ myapp.directive('modalDialog', function() {
         "<div>" +
         "<div class='modal-header'>" +
         "<button type='button' class='close' data-dismiss='cancel' ng-click='cancel()' aria-label='Close'><span aria-hidden='true'>&times;</span></button>"+
-        "<h3 class='modal-title' ng-bind='dialogTitle'></h3>" +
+        "<h3 class='modal-title' ng-bind-html='dialogTitle'></h3>" +
         "</div>" +
         "<div class='modal-body' ng-transclude></div>" +
-        "</div"
+        "</div>"
     };
 });
 
@@ -144,6 +204,26 @@ myapp.config(['$routeProvider', 'appconf', function($routeProvider, appconf) {
             controller: 'SingleController',
             controllerAs: 'ctrl'
         })
+        .when('/search', {
+            templateUrl: 't/search.html',
+            controller: 'SearchController',
+            controllerAs: 'ctrl'
+        })
+        .when('/confirmation', {
+            templateUrl: 't/confirmation.html',
+            controller: 'ConfirmationController',
+            controllerAs: 'ctrl'
+        })
+        .when('/detail/:id', {
+            templateUrl: 't/detail.html',
+            controller: 'DetailController',
+            controllerAs: 'ctrl'
+        })
+        .when('/detailtest/:id', {
+            templateUrl: 't/detail_test.html',
+            controller: 'DetailController',
+            controllerAs: 'ctrl'
+        })
         .when('/about', {
             templateUrl: 't/about.html',
             controller: 'AboutController'
@@ -154,16 +234,22 @@ myapp.config(['$routeProvider', 'appconf', function($routeProvider, appconf) {
         })
         .when('/upload', {
             templateUrl: 't/upload.html',
-            controller: 'UploadController'
+            controller: 'UploadController',
+            requiresLogin: true
         })
         .when('/admin', {
             templateUrl: 't/admin.html',
-            controller: 'AdminController'
+            controller: 'AdminController',
+            requiresLogin: true
+        })
+        .when('/checkout', {
+            templateUrl: 't/checkout.html',
+            controller: 'CheckoutController',
         })
         .otherwise({
             redirectTo: '/gallery'
         });
-}]).run(['$rootScope', '$location', 'toaster', 'jwtHelper', 'appconf', 'AuthService', function($rootScope, $location, toaster, jwtHelper, appconf, AuthService) {
+}]).run(['$rootScope', '$location', 'toaster', 'jwtHelper', 'appconf', 'AuthService', 'CartService', function($rootScope, $location, toaster, jwtHelper, appconf, AuthService, CartService) {
     $rootScope.$on("$routeChangeStart", function(event, next, current) {
         $rootScope.title = 'CYoung Art';
         //redirect to /signin if user hasn't authenticated yet
