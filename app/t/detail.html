@@ -1,0 +1,64 @@
+
+<meta property="og:url"                content="{{absurl}}" />
+<meta property="og:type"               content="product.item" />
+<meta property="og:title"              content="{{img.title}}" />
+<meta property="og:description"        content="{{img.title}} on CYoung.art" />
+<meta property="og:image"              content="https://cyoung.art/public/images/{{img.path}}?dim=1024x1024" />
+
+<div class="fh5co-narrow-content fh5co-border-bottom container-flex" data-animate-effect="fadeInLeft" ng-cloak>
+    <h2 class="fh5co-heading" ><span class="animated fadeInDown slow">{{img.title}}</span></h2>
+    <div class="row">
+        <div class="col-sm-12">
+            <img ng-src="public/images/{{img.path}}?dim=1024x1024" class="img-responsive animated zoomIn delay-1s">
+        </div>
+    </div>
+    <div class="row animated fadeIn slow delay-3s">
+        <div class="col-xs-12">
+            <div class="pull-right">
+                <span class="fa-stack fa-lg" ng-repeat="ss in shareServices"
+                      socialshare
+                      socialshare-provider="{{ss.service}}"
+                      socialshare-text="{{img.title}}"
+                      socialshare-media="https://cyoung.art/public/images/{{img.path}}?dim=1024x1024"
+                      socialshare-hashtags="cyoung.art, bloomington, {{img.medium}}"
+                      socialshare-url="{{absurl}}">
+                      <i class="fa fa-square-o fa-stack-2x"></i>
+                      <i class="fa {{ss.icon}} fa-stack-1x"></i>
+                </span>
+            </div>
+        </div>
+    </div>
+    <div class="row animated fadeInUp slow delay-2s">
+        <div class="col-sm-6">
+            <ul class="list-group">
+                <li class="list-group-item">
+                    <b>Medium</b>: {{img.medium}}
+                </li>
+                <li class="list-group-item">
+                    <b>Date</b>: {{img.date | date: 'longDate'}}
+                </li>
+                <li class="list-group-item">
+                    <b>Dimensions</b>: {{img.width}}" x {{img.height}}"
+                </li>
+                <li class="list-group-item" ng-if="img.series_number !== undefined">
+                    <b>Series</b>: {{img.series}} ({{img.series_number}} of 170)
+                </li>
+            </ul>
+        </div>
+        <div class="col-sm-6">
+            <div class="row">
+                <div class="col-xs-12">
+
+                    <h3><i class="fa fa-fw fa-shopping-bag"></i> Ordering</h3>
+                        <span class="ngclicker" ng-class="{'text-muted': img.inventory.original < 2}"  ng-click="buyOriginal()"><i class="fa fa-fw fa-paint-brush" ng-if="img.inventory.original > 2"></i> Original Artwork</span> <span ng-if="img.inventory.original < 2"> - sold</span><br>
+                    <span class="ngclicker" ng-if="img.inventory.small_print > 0" ng-click="buy()"><i class="fa fa-fw fa-object-group"></i> Fine Art Prints</span><br>
+                    <span class="ngclicker" ng-if="img.inventory.postcard > 0" ng-click="buy()"><i class="fa fa-fw fa-envelope-open"></i> Postcards</span>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <p class="text-center"><a ng-click="goBack()" class="btn btn-primary btn-outline">Back to Gallery</a></p>
+    </div>
+</div>

@@ -1,0 +1,36 @@
+<modal-dialog>
+    <form>
+    <h4>Postcards (6" x 4") - {{img.inventory.postcard | currency}}
+        <span class="pull-right">
+            <i class="fa fa-fw fa-minus-circle" ng-click="adjust('postcard',-1)"></i> {{quantity.postcard}} <i class="fa fa-fw fa-plus-circle" ng-click="adjust('postcard', 1)"></i>
+        </span>
+    </h4>
+    <h4>Postcards (20x) - {{img.inventory.postcard_bulk | currency}}
+        <span class="pull-right">
+        <i class="fa fa-fw fa-minus-circle" ng-click="adjust('postcard_bulk',-1)"></i> {{quantity.postcard_bulk}} <i class="fa fa-fw fa-plus-circle" ng-click="adjust('postcard_bulk', 1)"></i>
+    </span>
+    </h4>
+    <h4>Fine Art Prints (8.5" x 5.5") - {{img.inventory.small_print | currency}}
+        <span class="pull-right">
+            <i class="fa fa-fw fa-minus-circle" ng-click="adjust('small_print',-1)"></i> {{quantity.small_print}} <i class="fa fa-fw fa-plus-circle" ng-click="adjust('small_print', 1)"></i>
+        </span>
+    </h4>
+    <h4>Fine Art Prints (17" x 11") - {{img.inventory.large_print | currency}}
+        <span class="pull-right">
+            <i class="fa fa-fw fa-minus-circle" ng-click="adjust('large_print',-1)"></i> {{quantity.large_print}} <i class="fa fa-fw fa-plus-circle" ng-click="adjust('large_print', 1)"></i>
+        </span>
+    </h4>
+    </form>
+    <br>
+    <h4>
+        <span class="pull-right">
+            Total: {{total | currency}}
+        </span>
+    </h4>
+    <br>
+    <div class="modal-footer">
+        <button class="btn btn-success" ng-click="ok()" ng-disabled="!quantity"><i class="fa fa-fw fa-plus"></i> Add</button>
+        <button class="btn btn-success" ng-click="checkout()" ng-disabled="!quantity"><i class="fa fa-fw fa-shopping-cart"></i> Add and Checkout</button>
+        <button class="btn btn-default" ng-click="cancel()"><i class="fa fa-fw fa-times"></i> Cancel</button>
+    </div>
+</modal-dialog>

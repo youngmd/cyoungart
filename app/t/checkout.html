@@ -1,0 +1,39 @@
+<div class="fh5co-gallery fh5co-border-bottom" data-animate-effect="fadeInLeft">
+    <h2 class="fh5co-heading" >Checkout</h2>
+    <div class="row" ng-cloak>
+        <div class="col-sm-10 col-sm-offset-1">
+        <form>
+            <h4 ng-repeat="item in cart"> <img src="{{'/public/images/' + item.item.path + '?dim=64x64';}}" alt="{{img.path}}"> - {{item.title}} - {{models[item.model].title}} ({{models[item.model].dim}})
+                <span class="pull-right">
+                    {{item.price | currency}} ea. <i class="fa fa-fw fa-minus-circle" ng-click="adjust(item,-1)"></i> {{item.quantity}} <i class="fa fa-fw fa-plus-circle" ng-click="adjust(item, 1)"></i>
+                </span>
+            </h4>
+
+            <div class="row">
+                <div class="col-sm-3 col-sm-offset-9">
+                <div class="form-group">
+                    <label for="select" class="control-label">Shipping & Handling</label>
+                    <select
+                        class="form-control"
+                        id="select"
+                        ng-model="shipping"
+                        ng-change="calcTotal()"
+                        ng-options="so as (so.name + ' - ' + (so.cost | currency )) for so in shipping_options">
+                    </select>
+                </div></div>
+            </div>
+        </form>
+        <br>
+        <h4>
+        <span class="pull-right">
+            Total: {{total | currency}}
+        </span>
+        </h4>
+        <br>
+        <div class="modal-footer">
+            <button class="btn btn-success" ng-click="checkout()" ng-disabled="!total"><i class="fa fa-fw fa-shopping-cart"></i> Checkout</button>
+            <button class="btn btn-default" ng-click="empty()"><i class="fa fa-fw fa-times"></i> Empty Cart</button>
+        </div>
+        </div>
+    </div>
+</div>
