@@ -93,6 +93,7 @@ myapp.controller('CheckoutController', function($scope, toaster, CartService, $h
     $scope.pageStatus = 'cart';
     $scope.models = {
         postcard: { title: "Postcard", dim: '6" x 4"'},
+        postcard_bulk: { title: "Postcard (20x)", dim: '6" x 4"'},
         small_print: { title: "Fine Art Print", dim: '8.5" x 5.5"'},
         large_print: { title: "Fine Art Print", dim: '17" x 11"'}
     };
@@ -248,6 +249,7 @@ myapp.controller('DetailController', function ($scope, $routeParams, $location, 
                 $scope.dialogTitle = $sce.trustAsHtml("<i class='fa fa-fw fa-cart-plus'></i> Add to Cart");
                 $scope.quantity = {
                     postcard: 0,
+                    postcard_bulk: 0,
                     small_print: 0,
                     large_print: 0
                 };
